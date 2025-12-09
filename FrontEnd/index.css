@@ -1972,3 +1972,27 @@ body.light-theme .theme-icon.moon {
         border-bottom: none;
     }
 }
+
+/* Light theme tracking styles */
+body.light-theme .tracking-section {
+    background: var(--bg-secondary);
+}
+
+body.light-theme .tracking-input-group input {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.light-theme .tracking-result {
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-md);
+}
+
+body.light-theme .step-icon {
+    background: var(--bg-primary);
+}
+
+body.light-theme .tracking-error {
+    background: rgba(239, 68, 68, 0.08);
+}
