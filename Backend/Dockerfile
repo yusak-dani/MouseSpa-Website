@@ -1,4 +1,5 @@
 # Build stage
+# Updated: Admin dashboard and order tracking v1.0
 FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
