@@ -354,10 +354,16 @@ async function handleFormSubmit(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            showToast('success', 'Pesanan Berhasil!', 'Terima kasih! Pesanan Anda telah kami terima.');
+            const orderId = result.data?.id || result.order_id || 'N/A';
+            showToast('success', 'Pesanan Berhasil!', `Order ID Anda: #${orderId} - Simpan ID ini untuk melacak pesanan Anda.`);
             orderForm.reset();
             addressSection.style.display = 'none';
             updateSummary();
+
+            // Show order ID in a more visible alert
+            setTimeout(() => {
+                alert(`🎉 Pesanan Berhasil!\n\nOrder ID Anda: #${orderId}\n\nSimpan nomor ini untuk melacak status pesanan Anda di bagian "Lacak Pesanan"`);
+            }, 500);
         } else {
             throw new Error(result.message || 'Terjadi kesalahan saat mengirim pesanan');
         }
