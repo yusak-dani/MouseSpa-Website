@@ -29,6 +29,7 @@
                 <li><a href="#home">Beranda</a></li>
                 <li><a href="#services">Layanan</a></li>
                 <li><a href="#order">Pesan Sekarang</a></li>
+                <li><a href="#tracking">Lacak Pesanan</a></li>
             </ul>
             <div class="nav-actions">
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -379,6 +380,99 @@
                             Chat WhatsApp
                         </a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Tracking Section -->
+    <section id="tracking" class="tracking-section">
+        <div class="container">
+            <div class="section-header" data-reveal>
+                <span class="section-badge">Lacak Pesanan</span>
+                <h2>Cek <span class="gradient-text">Status Pesanan</span> Anda</h2>
+                <p>Masukkan Order ID yang dikirim via WhatsApp/Email untuk melacak pesanan Anda</p>
+            </div>
+
+            <div class="tracking-container" data-reveal data-reveal-delay="100">
+                <div class="tracking-form">
+                    <div class="tracking-input-group">
+                        <input type="text" id="tracking-order-id" placeholder="Masukkan Order ID (contoh: 1)" />
+                        <button type="button" class="btn btn-primary" id="track-btn">
+                            <span>🔍 Lacak</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tracking Result -->
+                <div id="tracking-result" class="tracking-result" style="display: none;">
+                    <div class="tracking-header">
+                        <h3>📦 Order #<span id="result-order-id"></span></h3>
+                        <span class="tracking-name" id="result-name"></span>
+                    </div>
+
+                    <div class="tracking-progress">
+                        <div class="progress-step" data-status="pending">
+                            <div class="step-icon">⏳</div>
+                            <div class="step-info">
+                                <span class="step-title">Menunggu</span>
+                                <span class="step-desc">Order diterima</span>
+                            </div>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-status="picked_up">
+                            <div class="step-icon">🚗</div>
+                            <div class="step-info">
+                                <span class="step-title">Dijemput</span>
+                                <span class="step-desc">Mousepad dalam perjalanan</span>
+                            </div>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-status="in_progress">
+                            <div class="step-icon">🔄</div>
+                            <div class="step-info">
+                                <span class="step-title">Dikerjakan</span>
+                                <span class="step-desc">Proses pembersihan</span>
+                            </div>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-status="done">
+                            <div class="step-icon">✨</div>
+                            <div class="step-info">
+                                <span class="step-title">Selesai</span>
+                                <span class="step-desc">Mousepad bersih!</span>
+                            </div>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-status="delivered">
+                            <div class="step-icon">📦</div>
+                            <div class="step-info">
+                                <span class="step-title">Dikirim</span>
+                                <span class="step-desc">Dalam pengiriman</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tracking-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Layanan:</span>
+                            <span class="detail-value" id="result-layanan"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Jumlah:</span>
+                            <span class="detail-value" id="result-qty"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tanggal Order:</span>
+                            <span class="detail-value" id="result-date"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="tracking-error" class="tracking-error" style="display: none;">
+                    <span class="error-icon">❌</span>
+                    <p>Order tidak ditemukan. Pastikan Order ID benar.</p>
                 </div>
             </div>
         </div>

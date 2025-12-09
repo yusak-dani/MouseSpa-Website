@@ -33,3 +33,19 @@ func DeleteOrder(id uint) error {
 	result := database.GetDB().Delete(&models.Order{}, id)
 	return result.Error
 }
+
+// UpdateOrderStatus mengupdate status order
+func UpdateOrderStatus(id uint, status string) error {
+	result := database.GetDB().Model(&models.Order{}).Where("id = ?", id).Update("status", status)
+	return result.Error
+}
+
+// GetOrderForTracking mengambil order untuk tracking customer
+func GetOrderForTracking(id uint) (*models.Order, error) {
+	var order models.Order
+	result := database.GetDB().Select("id", "status", "nama_lengkap", "layanan", "jumlah_mousepad", "created_at", "updated_at").First(&order, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &order, nil
+}

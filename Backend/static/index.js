@@ -1,5 +1,5 @@
 // ===== Configuration =====
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // ===== DOM Elements =====
 const orderForm = document.getElementById('orderForm');
@@ -422,4 +422,99 @@ window.addEventListener('scroll', () => {
     }
 
     lastScroll = currentScroll;
+});
+
+// ===== Order Tracking =====
+function initOrderTracking() {
+    const trackBtn = document.getElementById('track-btn');
+    const trackingInput = document.getElementById('tracking-order-id');
+
+    if (trackBtn && trackingInput) {
+        trackBtn.addEventListener('click', () => trackOrder());
+        trackingInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                trackOrder();
+            }
+        });
+    }
+}
+
+async function trackOrder() {
+    const orderId = document.getElementById('tracking-order-id').value.trim();
+    const resultDiv = document.getElementById('tracking-result');
+    const errorDiv = document.getElementById('tracking-error');
+
+    // Hide previous results
+    resultDiv.style.display = 'none';
+    errorDiv.style.display = 'none';
+
+    if (!orderId) {
+        showToast('error', 'Error', 'Masukkan Order ID');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/orders/track/${orderId}`);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            displayTrackingResult(result.data);
+        } else {
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error tracking order:', error);
+        errorDiv.style.display = 'block';
+    }
+}
+
+function displayTrackingResult(order) {
+    const resultDiv = document.getElementById('tracking-result');
+
+    // Set order info
+    document.getElementById('result-order-id').textContent = order.id;
+    document.getElementById('result-name').textContent = order.nama_lengkap;
+
+    // Parse layanan
+    let layanan = order.layanan;
+    try {
+        if (typeof layanan === 'string') {
+            layanan = JSON.parse(layanan);
+        }
+        layanan = Array.isArray(layanan) ? layanan.join(', ') : layanan;
+    } catch {
+        // Keep as is
+    }
+
+    document.getElementById('result-layanan').textContent = layanan;
+    document.getElementById('result-qty').textContent = order.jumlah_mousepad + ' mousepad';
+    document.getElementById('result-date').textContent = new Date(order.created_at).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    // Update progress steps
+    const status = order.status || 'pending';
+    const statusOrder = ['pending', 'picked_up', 'in_progress', 'done', 'delivered'];
+    const currentIndex = statusOrder.indexOf(status);
+
+    const progressSteps = resultDiv.querySelectorAll('.progress-step');
+    progressSteps.forEach((step, index) => {
+        step.classList.remove('active', 'completed');
+
+        if (index < currentIndex) {
+            step.classList.add('completed');
+        } else if (index === currentIndex) {
+            step.classList.add('active');
+        }
+    });
+
+    // Show result
+    resultDiv.style.display = 'block';
+}
+
+// Add tracking initialization to DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    initOrderTracking();
 });

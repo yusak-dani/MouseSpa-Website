@@ -7,6 +7,7 @@ import (
 // Order merepresentasikan data pesanan pencucian mousepad
 type Order struct {
 	ID                uint      `gorm:"primaryKey" json:"id"`
+	Status            string    `gorm:"default:'pending'" json:"status"`
 	NamaLengkap       string    `gorm:"not null" json:"nama_lengkap" binding:"required"`
 	NomorTelepon      string    `gorm:"not null" json:"nomor_telepon" binding:"required"`
 	Email             string    `gorm:"not null" json:"email" binding:"required,email"`

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - MouseSpa</title>
+    <link rel="stylesheet" href="/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="admin-header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🐭</span>
+                <span class="logo-text">MouseSpa</span>
+                <span class="admin-badge">Admin</span>
+            </div>
+            <a href="/" class="back-link">← Kembali ke Website</a>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <h3 id="total-orders">0</h3>
+                        <p>Total Pesanan</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <h3 id="pending-orders">0</h3>
+                        <p>Menunggu</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-info">
+                        <h3 id="inprogress-orders">0</h3>
+                        <p>Dalam Proses</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 id="completed-orders">0</h3>
+                        <p>Selesai</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="orders-section">
+                <div class="section-header">
+                    <h2>Daftar Pesanan</h2>
+                    <button class="refresh-btn" onclick="loadOrders()">🔄 Refresh</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama</th>
+                                <th>Telepon</th>
+                                <th>Layanan</th>
+                                <th>Qty</th>
+                                <th>Metode</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="no-orders" class="no-orders" style="display: none;">
+                    <p>📭 Belum ada pesanan</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Status Update Modal -->
+    <div id="status-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Status Pesanan</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Order ID: <strong id="modal-order-id"></strong></p>
+                <p>Pelanggan: <strong id="modal-customer-name"></strong></p>
+                <div class="status-options">
+                    <button class="status-btn pending" onclick="updateStatus('pending')">⏳ Pending</button>
+                    <button class="status-btn picked_up" onclick="updateStatus('picked_up')">🚗 Dijemput</button>
+                    <button class="status-btn in_progress" onclick="updateStatus('in_progress')">🔄 Dikerjakan</button>
+                    <button class="status-btn done" onclick="updateStatus('done')">✨ Selesai</button>
+                    <button class="status-btn delivered" onclick="updateStatus('delivered')">📦 Dikirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Hapus Pesanan</h3>
+                <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Yakin ingin menghapus pesanan <strong id="delete-order-id"></strong>?</p>
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeDeleteModal()">Batal</button>
+                    <button class="btn-delete" onclick="confirmDelete()">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin.js"></script>
+</body>
+
+</html>

@@ -43,15 +43,41 @@ func getEnv(key, defaultValue string) string {
 func getEnvWithFallback(keys []string, defaultValue string) string {
 	for _, key := range keys {
 		if value := os.Getenv(key); value != "" {
+			log.Printf("Found env var %s = %s", key, maskValue(value))
 			return value
 		}
 	}
+	log.Printf("No env var found for %v, using default: %s", keys, defaultValue)
 	return defaultValue
+}
+
+// maskValue masks sensitive values for logging
+func maskValue(value string) string {
+	if len(value) <= 4 {
+		return "****"
+	}
+	return value[:2] + "****" + value[len(value)-2:]
 }
 
 // InitDB menginisialisasi koneksi database MySQL
 func InitDB() {
+	// Check for MYSQL_URL first (Railway provides this)
+	mysqlURL := os.Getenv("MYSQL_URL")
+	if mysqlURL != "" {
+		log.Println("Using MYSQL_URL for database connection")
+		var err error
+		DB, err = gorm.Open(mysql.Open(mysqlURL), &gorm.Config{})
+		if err != nil {
+			log.Fatal("Gagal koneksi ke database MySQL via URL:", err)
+		}
+		log.Println("Database MySQL berhasil terkoneksi via URL!")
+		return
+	}
+
+	// Fallback to individual config
 	config := GetConfig()
+
+	log.Printf("Attempting to connect to MySQL at %s:%s", config.Host, config.Port)
 
 	// Format DSN: user:password@tcp(host:port)/dbname?charset=utf8mb4&parseTime=True&loc=Local
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
@@ -74,3 +100,4 @@ func InitDB() {
 func GetDB() *gorm.DB {
 	return DB
 }
+

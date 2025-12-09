@@ -19,6 +19,8 @@ func SetupOrderRoutes(router *gin.RouterGroup) {
 		orders.GET("", getAllOrders)
 		orders.GET("/:id", getOrderByID)
 		orders.DELETE("/:id", deleteOrder)
+		orders.PUT("/:id/status", updateOrderStatus)
+		orders.GET("/track/:id", trackOrder)
 	}
 }
 
@@ -147,5 +149,90 @@ func deleteOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "Order berhasil dihapus",
+	})
+}
+
+// updateOrderStatus handler untuk PUT /api/orders/:id/status
+func updateOrderStatus(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "ID tidak valid",
+		})
+		return
+	}
+
+	var input struct {
+		Status string `json:"status" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Status tidak valid",
+		})
+		return
+	}
+
+	// Validasi status
+	validStatuses := map[string]bool{
+		"pending":     true,
+		"picked_up":   true,
+		"in_progress": true,
+		"done":        true,
+		"delivered":   true,
+	}
+
+	if !validStatuses[input.Status] {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Status tidak valid. Gunakan: pending, picked_up, in_progress, done, delivered",
+		})
+		return
+	}
+
+	if err := service.UpdateOrderStatus(uint(id), input.Status); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "Gagal mengupdate status",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Status berhasil diupdate",
+		"status":  input.Status,
+	})
+}
+
+// trackOrder handler untuk GET /api/orders/track/:id (untuk customer)
+func trackOrder(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Order ID tidak valid",
+		})
+		return
+	}
+
+	order, err := service.GetOrderForTracking(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"success": false,
+			"message": "Order tidak ditemukan",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Order ditemukan",
+		"data":    order,
 	})
 }
